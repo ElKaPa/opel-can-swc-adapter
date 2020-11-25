@@ -2,6 +2,7 @@
 Opel CAN-BUS adapter based on Arduino, CAN shield and Microchip digital potentiometer to use steering wheel, generate ignition, illumination and reverse signal for aftermarket headunits.
 
 CAN code is based on https://github.com/vtl/volvo-kenwood
+Steering Wheel code is based on https://github.com/bigevtaylor/arduino-swc
 
 The code is tested on Opel Corsa-D and should work for almost all Opel cars with MS-CAN.
 Used headunit is Pioneer SPH-DA230DAB

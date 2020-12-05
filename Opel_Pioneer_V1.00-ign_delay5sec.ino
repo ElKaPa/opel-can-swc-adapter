@@ -7,7 +7,7 @@
    Used HW:
    Arduino NANO
    MPC2515 8MHz CAN Board
-   MCP4131
+   MCP4151
    
    Based on origin code:
    2005 VOLVO XC70 steering wheel buttons interface for Kenwood head unit
@@ -67,10 +67,10 @@
 
 //#define WD_OUTPUT     8  // MAX823/MAX824 pin 4 (WDI)
 #define ILUM_OUTPUT   7  // Ignition control wire (through 5->12v NPN transistor amplifier)
-#define CAN_RESET     6  // MCP2515 pin 17 (-Reset)
+#define CAN_RESET     3  // MCP2515 pin 17 (-Reset)
 #define IGN_OUTPUT    5  // Ignition control wire (through 5->12v NPN transistor amplifier)
 #define PARK_OUTPUT   4  // Parking position
-#define CAMERA_OUTPUT 3  // Reverse position (through 5->12v NPN transistor amplifier)
+#define CAMERA_OUTPUT 6  // Reverse position (through 5->12v NPN transistor amplifier)
 #define CSPINPOT      9  // CS Pin for Digipot MCP4131
 #define RING_GND      A0 // GND for Ring
 
@@ -84,7 +84,7 @@ boolean can_ok = false;
 // In the function for the tip commands we only change resistance for the 
 // wiper where the tip is connected. The ring floats and is ignored by the 
 // head unit
-void MCP4131_tip(int digiValue, int delayMs) {
+void MCP41xx_tip(int digiValue, int delayMs) {
       digitalWrite(CSPINPOT, LOW);
       SPI.transfer(00);
       SPI.transfer(digiValue);
@@ -96,7 +96,7 @@ void MCP4131_tip(int digiValue, int delayMs) {
 
 // For ring functions the wiper for the tip is where resistance is applied
 // in combination with taking the ring to ground via A0
-void MCP4131_ring(int digiValue, int delayMs) {
+void MCP41xx_ring(int digiValue, int delayMs) {
       digitalWrite(CSPINPOT, LOW);
       pinMode(RING_GND, OUTPUT);
       digitalWrite(RING_GND, LOW);
@@ -214,36 +214,36 @@ unsigned long check_canbus()
         //next track
         if (buf[0] == 0x1 && buf[1] == 0x91 && buf[2] == 0x00) {
         Serial.println("Next Track detect!");
-        MCP4131_tip(19, 250); // 8kOhm
+        MCP41xx_tip(19, 250); // 8kOhm
         }
         //previous track
         else if (buf[0] == 0x1 && buf[1] == 0x92 && buf[2] == 0x00) {
         Serial.println("Previous Track detect!");
-        MCP4131_tip(27, 250); // 11,25kOhm
+        MCP41xx_tip(27, 250); // 11,25kOhm
         }
         //volume up
         else if (buf[0] == 0x8 && buf[1] == 0x93 && buf[2] == 0x01) {
         Serial.println("Volume UP detect!");
-        MCP4131_tip(42, 250); // 16kOhm
+        MCP41xx_tip(42, 250); // 16kOhm
         }
         //volume down
         else if (buf[0] == 0x8 && buf[1] == 0x93 && buf[2] == 0xff) {
         Serial.println("Volume Down detect!");
-        MCP4131_tip(55, 250); // 24kOhm
+        MCP41xx_tip(55, 250); // 24kOhm
         }
         //voice button
         else if (buf[0] == 0x1 && buf[1] == 0x81 && buf[2] == 0x00) {
         Serial.println("Voice detect!");
-        MCP4131_ring(232, 1000); // 38-88kOhm hold = Voice active
+        MCP41xx_ring(232, 1000); // 38-88kOhm hold = Voice active
         }
         //phone button
         else if (buf[0] == 0x1 && buf[1] == 0x82 && buf[2] == 0x00) {
         Serial.println("Phone detect!");
-        MCP4131_ring(9, 250); // 3kOhm Phone answer/ long press BT Menu
+        MCP41xx_ring(9, 250); // 3kOhm Phone answer/ long press BT Menu
         }
         else if (buf[0] == 0x1 && buf[1] == 0x82 && buf[2] > 0x00) {
         Serial.println("Phone long detect!");
-        MCP4131_ring(14, 250); // 5kOhm Phone hang up / long press reject call
+        MCP41xx_ring(14, 250); // 5kOhm Phone hang up / long press reject call
         }
         break;
       case BCM_CAN_ID:

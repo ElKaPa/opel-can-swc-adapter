@@ -50,6 +50,8 @@
    0x4E8 | DLC:7 | 46 0F 00 00 00 00 00  
                                      00 = no reverse
                                      04 = reverse
+                                     00000100
+                                          | Reverse Bit 1 = Reverse
                                00 00    = D4 = MSB Speed, D5 = LSB Speed 
          
 */
@@ -266,7 +268,7 @@ unsigned long check_canbus()
       //  digitalWrite(PARK_OUTPUT, ((buf[6] & 0x30) == 0x10) ? LOW : HIGH);
       //  Serial.println("Parking detect!");
         pinMode(CAMERA_OUTPUT, OUTPUT);
-        digitalWrite(CAMERA_OUTPUT, (buf[6] == 0x04) ? LOW : HIGH);
+        digitalWrite(CAMERA_OUTPUT, ((buf[6] & 0x04) == 0x04) ? LOW : HIGH);
         Serial.println("Reverse detect!");
         break;
       default:
